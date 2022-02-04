@@ -1,0 +1,28 @@
+{
+  "name": "signalk-mfd-plugin",
+  "description": "Generic SignalK plugin for MFDs",
+  "version": "0.0.1",
+  "private": false,
+  "license": "UNLICENSED",
+  "keywords": [
+    "signalk-webapp",
+    "signalk-node-server-plugin",
+    "signalk-category-notifications",
+    "instruments",
+    "dashboard",
+    "marine",
+    "nmea",
+    "nautic"
+  ],
+  "signalk-plugin-enabled-by-default": true,
+  "author": {
+    "name": "Hans Tool",
+    "email": "hans@defect.org"
+  },
+  "main": "plugin/index.js",
+  "files": [
+    "build"
+  ],
+  "homepage": "/signalk-mfd-plugin/",
+  }
+}
