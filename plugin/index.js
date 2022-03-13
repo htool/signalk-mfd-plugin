@@ -9,6 +9,7 @@ const MULTICAST_GROUP_IP = '239.2.1.1';
 // tcpdump -i en0 -A  -v net 239.2.1.1
 
 var plugin = {}
+var intervalid;
 
 module.exports = function(app, options) {
   "use strict"
@@ -85,7 +86,7 @@ module.exports = function(app, options) {
     var text = [];
     app.debug('Starting plugin');
     app.debug('Options: %j', JSON.stringify(options));
-	  setInterval(() => publishToNavico(), 10 * 1000);
+	  intervalid = setInterval(() => publishToNavico(), 10 * 1000);
 
 		const getPublishMessage = (tile) => {
       // Options: "{\"tiles\":[{\"Source\":\"SignalK\",\"IP\":\"127.0.0.4\",\"FeatureName\":\"Signal K webapps\",\"Name\":\"Signal K Name\",\"Description\":\"Signal K Menu Text\",\"Icon\":\"http://127.0.0.4/admin/img/signal-k-logo-image-text.svg\",\"URL\":\"http://127.0.0.4:3000/admin/#/webapps\"}]}"
@@ -131,12 +132,12 @@ module.exports = function(app, options) {
 		const publishToNavico = () => {
 			for (const [name, infos] of Object.entries(os.networkInterfaces())) {
 			  for (const addressInfo of infos || []) {
-			    if (addressInfo.family === 'IPv4') {
-            options['tiles'].forEach((tile) => {
+          options['tiles'].forEach((tile) => {
+            if (addressInfo.address == tile['IP']) {
               app.debug('tile: %j', JSON.stringify(tile));
 			        send(getPublishMessage(tile), addressInfo.address, MULTICAST_GROUP_IP, PUBLISH_PORT);
-            });
-			    }
+            }
+          });
 			  }
 			}
 		}
@@ -145,7 +146,9 @@ module.exports = function(app, options) {
 
   plugin.stop = function() {
     app.debug("Stopping")
-    clearInterval(pushInterval)
+    unsubscribes.forEach(f => f());
+    unsubscribes = [];
+    clearInterval(intervalid);
     app.debug("Stopped")
   }
 
