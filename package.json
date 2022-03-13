@@ -21,5 +21,12 @@
   "files": [
     "build"
   ],
-  "homepage": "/signalk-mfd-plugin/"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/htool/signalk-navtex-plugin.git"
+  },
+  "bugs": {
+    "url": "https://github.com/htool/signalk-navtex-plugin/issues"
+  },
+  "homepage": "https://github.com/htool/signalk-navtex-plugin#readme"
 }
