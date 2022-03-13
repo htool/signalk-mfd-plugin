@@ -14,7 +14,7 @@ module.exports = function(app, options) {
   "use strict"
   var plugin = {}
   plugin.id = id
-  plugin.name = "Add webapp tiles to B&G/Navico MFDs"
+  plugin.name = "B&G/Navico MFD WebApp tiles"
   plugin.description = "Signal K plugin to add webapp tiles to B&G/Navico MFDs"
 
   var unsubscribes = []
@@ -59,7 +59,7 @@ module.exports = function(app, options) {
             Icon: {
               type: 'string',
 			        title: 'WebApp tile image url',
-	            default: 'http://192.168.x.x/admin/img/signal-k-logo-image-text.svg',
+	            default: 'http://192.168.x.x:3000/signalk-mfd-plugin/Logo-SignalK-navico.png',
 			      },
             URL: {
               type: 'string',
