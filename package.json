@@ -1,17 +1,15 @@
 {
   "name": "signalk-mfd-plugin",
-  "description": "Generic SignalK plugin for MFDs",
-  "version": "0.0.1",
+  "description": "SignalK plugin for B&G MFDs to add tiles to WebApps",
+  "version": "0.0.2",
   "private": false,
   "license": "UNLICENSED",
   "keywords": [
     "signalk-webapp",
     "signalk-node-server-plugin",
-    "signalk-category-notifications",
     "instruments",
     "dashboard",
     "marine",
-    "nmea",
     "nautic"
   ],
   "signalk-plugin-enabled-by-default": true,
