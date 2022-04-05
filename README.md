@@ -2,7 +2,11 @@
 
 This plugin allows you to add WebApps to your MFD. Possible use cases are:
  - [NavTex messages](https://www.npmjs.com/package/signalk-navtex-plugin)
- - ...
+ - [SailTrim](https://www.npmjs.com/package/signalk-trim-plugin)
+
+## Ethernet required
+WebApps will only appear on the MFD when it's connected through wired Ethernet.
+You can read more on how to make an Ethernet connection [here](https://www.bandg.com/nl-nl/service/?guideTitle=original&guideId=003-795)
 
 ## IP addresses
 Because these tiles typically represent hardware on the ethernet network, each tile is expected to have a unique IP address.
