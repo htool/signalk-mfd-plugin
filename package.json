@@ -1,7 +1,7 @@
 {
   "name": "signalk-mfd-plugin",
   "description": "SignalK plugin for B&G MFDs to add tiles to WebApps",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "private": false,
   "license": "UNLICENSED",
   "keywords": [
