@@ -1,7 +1,7 @@
 {
   "name": "signalk-mfd-plugin",
   "description": "SignalK plugin for B&G MFDs to add tiles to WebApps",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "private": false,
   "license": "UNLICENSED",
   "keywords": [
@@ -18,9 +18,6 @@
     "email": "hans@defect.org"
   },
   "main": "plugin/index.js",
-  "files": [
-    "build"
-  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/htool/signalk-mfd-plugin.git"
