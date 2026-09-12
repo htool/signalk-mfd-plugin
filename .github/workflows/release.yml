@@ -1,8 +1,7 @@
-# Publishes to npmjs.com with Trusted Publishing (OIDC).
-# No NPM_TOKEN and no 90-day granular access token.
+# Patch-bump and npm publish at most once per UTC day when plugin/ or public/
+# changed since the last release. Trusted Publishing (OIDC); no NPM_TOKEN.
 #
-# Publish runs only after a push to main when package.json's version
-# is not already on the registry.
+# Keep this filename: npm trusted publishing is bound to release.yml.
 #
 # One-time setup (package owner, with 2FA):
 #   npmjs.com → Package → Settings → Trusted Publisher → GitHub Actions
@@ -11,75 +10,95 @@
 #     Workflow filename:    release.yml
 #     Environment:          (leave blank)
 #     Allowed action:       npm publish
-#   or from a logged-in machine:
-#     npx -y npm@latest trust github signalk-mfd-plugin \
-#       --file release.yml \
-#       --repository htool/signalk-mfd-plugin \
-#       --allow-publish
 # Docs: https://docs.npmjs.com/trusted-publishers/
 
 name: Release
 
 on:
+  schedule:
+    - cron: '0 6 * * *'
   workflow_dispatch:
     inputs:
-      publish:
-        description: 'Publish to npm (main branch only)'
-        required: false
-        default: false
+      force:
+        description: Publish even if plugin/public are unchanged (also bypasses the once-a-day cap)
         type: boolean
+        default: false
   push:
     branches:
       - main
+    paths:
+      - 'plugin/**'
+      - 'public/**'
+      - 'scripts/**'
+      - '.github/workflows/release.yml'
+      - 'package.json'
+      - 'package-lock.json'
+
+permissions:
+  contents: write
+  id-token: write
+
+concurrency:
+  group: npm-publish-signalk-mfd-plugin
+  cancel-in-progress: false
 
 jobs:
   publish:
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
           registry-url: 'https://registry.npmjs.org'
+
       - name: Ensure npm CLI supports trusted publishing
         run: npm install -g npm@latest
+
       - name: Remove setup-node auth token placeholder
         run: |
           NPMRC_PATH="${NPM_CONFIG_USERCONFIG:-$HOME/.npmrc}"
           if [ -f "$NPMRC_PATH" ]; then
             sed -i '/_authToken/d' "$NPMRC_PATH"
           fi
-      - run: npm ci
-      - name: Resolve package version
-        id: pkg
+
+      - name: Install dependencies
         run: |
-          VERSION=$(node -p "require('./package.json').version")
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          if npm view "signalk-mfd-plugin@${VERSION}" version >/dev/null 2>&1; then
-            echo "already_published=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "already_published=false" >> "$GITHUB_OUTPUT"
-          fi
-      - name: Skip publish (not main)
-        if: ${{ github.ref != 'refs/heads/main' }}
+          if [ -f package-lock.json ]; then npm ci; else npm install; fi
+
+      - name: Decide whether to publish
+        id: decide
+        env:
+          FORCE_PUBLISH: ${{ github.event.inputs.force }}
+          NODE_AUTH_TOKEN: ''
+        run: node scripts/npm-publish-check.js --github-output
+
+      - name: Skip
+        if: steps.decide.outputs.should_publish != 'true'
+        run: echo "${{ steps.decide.outputs.reason }}"
+
+      - name: Test publish decision
+        if: steps.decide.outputs.should_publish == 'true'
+        run: node scripts/test-npm-publish-check.js
+
+
+
+      - name: Bump package version
+        if: steps.decide.outputs.should_publish == 'true'
         run: |
-          echo "Publish is restricted to main. Current ref is ${GITHUB_REF}"
-      - name: Skip publish (already on npm)
-        if: ${{ github.ref == 'refs/heads/main' && steps.pkg.outputs.already_published == 'true' }}
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          npm version "${{ steps.decide.outputs.next_version }}" -m "Release %s"
+
+      - name: Publish to npm with OIDC
+        if: steps.decide.outputs.should_publish == 'true'
+        run: npm publish --access public
+
+      - name: Push version bump and tag
+        if: steps.decide.outputs.should_publish == 'true'
         run: |
-          echo "signalk-mfd-plugin@${{ steps.pkg.outputs.version }} is already on npm; nothing to publish."
-      - name: Dry run validation
-        if: ${{ github.event_name == 'workflow_dispatch' && inputs.publish != true }}
-        run: echo "Manual workflow validation only; npm publish skipped."
-      - name: Publish to npm
-        if: ${{ github.ref == 'refs/heads/main' && steps.pkg.outputs.already_published == 'false' && (github.event_name == 'push' || inputs.publish == true) }}
-        run: |
-          VERSION="${{ steps.pkg.outputs.version }}"
-          if [[ "$VERSION" == *beta* ]]; then
-            npm publish --access public --tag beta
-          else
-            npm publish --access public
-          fi
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin "HEAD:${GITHUB_REF_NAME}" --follow-tags

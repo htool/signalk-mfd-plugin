@@ -1,5 +1,7 @@
 # SignalK plugin to add WebApp tiles to a B&G/Navico MFD
 
+App Store installs come from npm. A GitHub Action patch-bumps and publishes at most once per UTC day when `plugin/` changed (`.github/workflows/release.yml`, npm trusted publishing). The tiles themselves are URLs into other plugins; those webapps must use Signal K 2.x readonly `GET /signalk/v1/api/<pluginId>/...` because `/plugins/` is admin-only.
+
 This plugin allows you to add WebApps to your MFD. Possible use cases are:
  - [NavTex messages](https://www.npmjs.com/package/signalk-navtex-plugin)
  - [SailTrim](https://www.npmjs.com/package/signalk-trim-plugin)
