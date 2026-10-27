@@ -1,6 +1,6 @@
 {
   "name": "signalk-mfd-plugin",
-  "description": "SignalK plugin for B&G MFDs to add tiles to WebApps",
+  "description": "SignalK plugin for B&G MFDs to add tiles to WebApps over Ethernet or Wi-Fi",
   "version": "0.0.10",
   "private": false,
   "license": "UNLICENSED",
@@ -10,7 +10,8 @@
     "instruments",
     "dashboard",
     "marine",
-    "nautic"
+    "nautic",
+    "wifi"
   ],
   "signalk-plugin-enabled-by-default": true,
   "author": {
@@ -18,6 +19,9 @@
     "email": "hans@defect.org"
   },
   "main": "plugin/index.js",
+  "scripts": {
+    "test": "node --test test/"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/htool/signalk-mfd-plugin.git"
