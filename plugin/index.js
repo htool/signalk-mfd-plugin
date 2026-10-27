@@ -1,5 +1,5 @@
 const id = "signalk-mfd-plugin";
-const dgram_1 = __importDefault(require("dgram"));
+const dgram = require("dgram");
 const os = require("os");
 const debug = require('debug')(id)
 const PUBLISH_PORT = 2053;
@@ -119,7 +119,7 @@ module.exports = function(app, options) {
 		}
 
 		const send = (msg, fromAddress, toAddress, port) => {
-			const socket = dgram_1.default.createSocket('udp4');
+			const socket = dgram.createSocket('udp4');
 			socket.once('listening', () => {
 			  socket.send(msg, port, toAddress, () => {
 			    socket.close();
