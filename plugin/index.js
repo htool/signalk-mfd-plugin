@@ -67,7 +67,7 @@ module.exports = function(app, options) {
 			        title: 'WebApp url',
 	            default: 'http://192.168.x.x:3000/admin/#/webapps',
 			      },
-	          Description: {
+	          MenuText: {
 	            type: 'string',
 	            title: 'Menu Text',
 	            default: 'Signal K Menu Text'
