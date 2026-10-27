@@ -1,7 +1,7 @@
 {
   "name": "signalk-mfd-plugin",
   "description": "SignalK plugin for B&G MFDs to add tiles to WebApps over Ethernet or Wi-Fi",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "private": false,
   "license": "UNLICENSED",
   "keywords": [
@@ -34,7 +34,6 @@
     "appIcon": "./signalk-logo.png",
     "displayName": "MFD tiles"
   },
-
   "dependencies": {
     "debug": "^4.3.4"
   }
