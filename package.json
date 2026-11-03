@@ -32,7 +32,13 @@
   "homepage": "https://github.com/htool/signalk-mfd-plugin#readme",
   "signalk": {
     "appIcon": "./signalk-logo.png",
-    "displayName": "MFD tiles"
+    "displayName": "MFD tiles",
+    "recommends": [
+      "signalk-navtex-plugin",
+      "signalk-trim-plugin",
+      "signalk-instrument-display-plugin",
+      "signalk-chain-plugin"
+    ]
   },
   "dependencies": {
     "debug": "^4.3.4"
